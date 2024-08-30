@@ -25,7 +25,7 @@ type RedmineIssue struct {
 	Issue Issue `json:"issue"`
 }
 
-func main() {
+func redmineTicket() {
 	issue := RedmineIssue{
 		Issue: Issue{
 			ProjectID:   projectID,
