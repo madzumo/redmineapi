@@ -9,7 +9,7 @@ import (
 
 const (
 	redmineURL = "http://localhost:8080/issues.json"
-	apiKey     = "92a96812bb461186a0226b919d4dd11b76871853"
+	apiKey     = "9"
 	projectID  = "1"
 	priorityID = "2"
 )
