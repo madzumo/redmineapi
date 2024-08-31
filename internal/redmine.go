@@ -1,17 +1,18 @@
-package main
+package internal
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 )
 
-const (
+var (
 	redmineURL = "http://localhost:8080/issues.json"
-	apiKey     = "9"
+	apiKey     = "1"
 	projectID  = "1"
-	priorityID = "2"
+	priorityID = "1"
 )
 
 type Issue struct {
@@ -25,12 +26,13 @@ type RedmineIssue struct {
 	Issue Issue `json:"issue"`
 }
 
-func redmineTicket() {
+func RedmineTicket(ticketSubject, ticketDescription string) {
+	getENV()
 	issue := RedmineIssue{
 		Issue: Issue{
 			ProjectID:   projectID,
-			Subject:     "PC Broken",
-			Description: "my computer needs fixing",
+			Subject:     ticketSubject,
+			Description: ticketDescription,
 			PriorityID:  priorityID,
 		},
 	}
@@ -63,4 +65,10 @@ func redmineTicket() {
 	} else {
 		fmt.Printf("Failed to create issue. Status: %s\n", resp.Status)
 	}
+}
+
+func getENV() {
+	redmineURL = fmt.Sprintf("%s/issues.json", os.Getenv("RED_URL"))
+	apiKey = os.Getenv("RED_APIKEY")
+	projectID = os.Getenv("RED_PROJECTID")
 }

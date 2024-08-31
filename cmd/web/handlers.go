@@ -1,16 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
-	"log"
 	"net/http"
-	"strconv"
+
+	"github.com/madzumo/redmineapi/internal"
 )
 
 // handlers
-func home(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Pepa Sucia GO")
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Server", "GO")
 
 	files := []string{
 		"./ui/html/base.tmpl",
@@ -20,7 +19,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Print(err.Error())
+		app.logger.Error(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -28,34 +27,20 @@ func home(w http.ResponseWriter, r *http.Request) {
 	err = ts.ExecuteTemplate(w, "base", nil)
 	// err = ts.Execute(w, nil)
 	if err != nil {
-		log.Print(err.Error())
+		app.logger.Error(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 	// w.Write([]byte("Hello from Snippetbox"))
 }
 
-func snippetVIEW(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.PathValue("id"))
-	if err != nil || id < 1 {
-		http.NotFound(w, r)
-		return
-	}
-	// msg := fmt.Sprintf("Display snippet with ID: %d...", id)
-	// w.Write([]byte(msg))
-
-	fmt.Fprintf(w, "Displacy snippet with ID: %d...", id)
-}
-
-func snippetCREATE(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Create a new snippet......"))
-}
-
-func snippetCreatePost(w http.ResponseWriter, r *http.Request) {
+func (app *application) sendTicketPost(w http.ResponseWriter, r *http.Request) {
 	//this is not needed because we are handling on the servemux (router)
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 	w.WriteHeader(http.StatusCreated) //201
+
+	internal.RedmineTicket("sub", "desc")
 	w.Write([]byte("Save new snippet..."))
 }
