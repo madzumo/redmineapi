@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 
 	"github.com/madzumo/redmineapi/internal"
 )
@@ -12,9 +14,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "GO")
 
 	files := []string{
-		"./ui/html/base.tmpl",
-		"./ui/html/nav.tmpl",
-		"./ui/html/home.tmpl",
+		"./ui/html/base.go.html",
+		"./ui/html/nav.go.html",
+		"./ui/html/home.go.html",
 	}
 
 	ts, err := template.ParseFiles(files...)
@@ -45,9 +47,9 @@ func (app *application) sendTicketPost(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) adminArea(w http.ResponseWriter, r *http.Request) {
 	files := []string{
-		"./ui/html/base.tmpl",
-		"./ui/html/nav.tmpl",
-		"./ui/html/admin.tmpl",
+		"./ui/html/base.go.html",
+		"./ui/html/nav.go.html",
+		"./ui/html/admin.go.html",
 	}
 
 	ts, err := template.ParseFiles(files...)
@@ -65,5 +67,17 @@ func (app *application) adminArea(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) adminAreaPost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	redmine := r.PostForm.Get("redmine")
+	pid := r.PostForm.Get("pid")
+	apiKey := r.PostForm.Get("apikey")
 
+	os.Setenv("RED_URL", redmine)
+	os.Setenv("RED_PID", pid)
+	os.Setenv("RED_APIKEY", apiKey)
+	// fmt.Fprintf(w, "%s", redmine)
 }

@@ -70,5 +70,5 @@ func RedmineTicket(ticketSubject, ticketDescription string) {
 func getENV() {
 	redmineURL = fmt.Sprintf("%s/issues.json", os.Getenv("RED_URL"))
 	apiKey = os.Getenv("RED_APIKEY")
-	projectID = os.Getenv("RED_PROJECTID")
+	projectID = os.Getenv("RED_PID")
 }
