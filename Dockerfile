@@ -6,13 +6,11 @@ COPY . /app/
 
 RUN go build -o redmineticketapi ./cmd/web
 
-FROM alpine:latest AS latest
+FROM scratch
 
 COPY --from=base /app/redmineticketapi /redmineticketapi
 COPY --from=base /app/ui /ui
 
 EXPOSE 4000
-
-RUN chmod +x /redmineticketapi
 
 CMD [ "/redmineticketapi" ]
