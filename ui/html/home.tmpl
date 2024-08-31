@@ -1,0 +1,20 @@
+{{define "title"}}Redmine Ticket{{end}}
+
+{{define "main"}}
+    <h2>Open a Ticket</h2>
+    <form action="/submit" method="POST">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br><br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email"><br><br>
+
+        <label for="subj">Subject:</label><br>
+        <input type="text" id="subj" name="subj"><br><br>
+
+        <label for="details">Details:</label><br>
+        <textarea type="details" id="details" name="details"></textarea><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+{{end}}
