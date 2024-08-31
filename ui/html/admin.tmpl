@@ -1,0 +1,14 @@
+{{define "title"}}Admin Area{{end}}
+
+{{define "main"}}
+    <h2>Server connection</h2>
+    <form action="/submit" method="POST">
+        <label for="redmine">Redmine Address:</label><br>
+        <input type="text" id="redmine" name="redmine"><br><br>
+
+        <label for="pid">ProjectID:</label><br>
+        <input type="email" id="pid" name="pid"><br><br>
+
+        <input type="submit" value="Save">
+    </form>
+{{end}}
