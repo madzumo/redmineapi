@@ -33,7 +33,7 @@ func getTicketMeta() ticketMeta {
 		redmineURL: fmt.Sprintf("%s/issues.json", s.CurrentRedmine),
 		apiKey:     s.CurrentApiKey,
 		projectID:  s.CurrentPID,
-		priorityID: "",
+		priorityID: "2",
 	}
 	return t
 }

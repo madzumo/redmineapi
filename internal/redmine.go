@@ -20,16 +20,18 @@ type RedmineIssue struct {
 }
 
 func (t *RedmineIssue) SendTicket(redmineURL, apiKey, userID string) {
-	// issue := RedmineIssue{
+	// issue2 := RedmineIssue{
 	// 	Issue: Issue{
-	// 		ProjectID:   ticket.ProjectID,
-	// 		Subject:     ticketSubject,
-	// 		Description: ticketDescription,
-	// 		PriorityID:  ticket.PriorityID,
+	// 		ProjectID:   "22",
+	// 		Subject:     "33",
+	// 		Description: "44",
+	// 		PriorityID:  "55",
 	// 		// AssignedID:  assignedID,
 	// 	},
 	// }
 
+	// fmt.Printf("t: %s\n", t)
+	// fmt.Printf("issue2: %s\n", issue2)
 	issueData, err := json.Marshal(t)
 	if err != nil {
 		fmt.Printf("Error marshalling issue: %v\n", err)
@@ -44,8 +46,7 @@ func (t *RedmineIssue) SendTicket(redmineURL, apiKey, userID string) {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Redmine-API-Key", apiKey)
-	req.Header.Set("X-Redmine-Switch-User", userID) //user_login_or_id
-	// This allows you to create a ticket on behalf of another user
+	// req.Header.Set("X-Redmine-Switch-User", "user_login_or_id") //create a ticket on behalf of another user
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
