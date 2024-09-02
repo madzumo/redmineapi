@@ -11,6 +11,6 @@ func (app *application) routes() *http.ServeMux {
 	mux.HandleFunc("GET /{$}", app.home)
 	mux.HandleFunc("POST /", app.sendTicketPost)
 	mux.HandleFunc("GET /admin/", app.adminArea)
-	mux.HandleFunc("POST /admin", app.adminAreaPost)
+	mux.HandleFunc("POST /admin/", app.adminAreaPost)
 	return mux
 }

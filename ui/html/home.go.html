@@ -16,5 +16,8 @@
         <textarea type="details" id="details" name="details"></textarea><br><br>
 
         <input type="submit" value="Submit">
-    </form>
+    </form><br><br>
+    {{if .Message}}
+    <p style="color: rgb(8, 113, 240);font-size: larger;">{{.Message}}</p>
+    {{end}}
 {{end}}

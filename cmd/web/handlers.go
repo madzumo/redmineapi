@@ -5,14 +5,17 @@ import (
 	"html/template"
 	"net/http"
 	"os"
-
-	"github.com/madzumo/redmineapi/internal"
 )
 
 // handlers
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "GO")
-
+	message := r.URL.Query().Get("message")
+	dataMSG := struct {
+		Message string
+	}{
+		Message: message,
+	}
 	files := []string{
 		"./ui/html/base.go.html",
 		"./ui/html/nav.go.html",
@@ -26,7 +29,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
+	err = ts.ExecuteTemplate(w, "base", dataMSG)
 	if err != nil {
 		app.logger.Error(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -39,10 +42,19 @@ func (app *application) sendTicketPost(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	// 	return
 	// }
-	w.WriteHeader(http.StatusCreated) //201
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+		return
+	}
+	t := getTicketMeta()
+	app.redmine.Issue.Description = r.PostForm.Get("details")
+	app.redmine.Issue.PriorityID = t.priorityID
+	app.redmine.Issue.ProjectID = t.projectID
+	app.redmine.Issue.Subject = r.PostForm.Get("subj")
+	app.redmine.SendTicket(t.redmineURL, t.apiKey, "0")
 
-	internal.RedmineTicket("sub", "desc")
-	w.Write([]byte("Save new snippet..."))
+	http.Redirect(w, r, "/?message=Ticket submitted successfully!", http.StatusSeeOther)
 }
 
 func (app *application) adminArea(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +71,8 @@ func (app *application) adminArea(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
+	currentE := getENV()
+	err = ts.ExecuteTemplate(w, "base", currentE)
 	if err != nil {
 		app.logger.Error(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -76,8 +89,10 @@ func (app *application) adminAreaPost(w http.ResponseWriter, r *http.Request) {
 	pid := r.PostForm.Get("pid")
 	apiKey := r.PostForm.Get("apikey")
 
+	// fmt.Printf("What I got: %s, %s, %s", redmine, pid, apiKey)
 	os.Setenv("RED_URL", redmine)
 	os.Setenv("RED_PID", pid)
 	os.Setenv("RED_APIKEY", apiKey)
 	// fmt.Fprintf(w, "%s", redmine)
+	http.Redirect(w, r, "/admin/", http.StatusSeeOther)
 }

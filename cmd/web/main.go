@@ -6,10 +6,13 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+
+	"github.com/madzumo/redmineapi/internal"
 )
 
 type application struct {
-	logger *slog.Logger
+	logger  *slog.Logger
+	redmine *internal.RedmineIssue
 }
 
 func main() {
@@ -18,7 +21,8 @@ func main() {
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	app := &application{
-		logger: logger,
+		logger:  logger,
+		redmine: &internal.RedmineIssue{},
 	}
 
 	logger.Info("starting server", "port", *port)

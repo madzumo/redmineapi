@@ -5,14 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
-)
-
-var (
-	redmineURL = "http://localhost:8080/issues.json"
-	apiKey     = "1"
-	projectID  = "1"
-	priorityID = "1"
 )
 
 type Issue struct {
@@ -20,24 +12,25 @@ type Issue struct {
 	Subject     string `json:"subject"`
 	Description string `json:"description"`
 	PriorityID  string `json:"priority_id"`
+	// AssignedID  string `json:"assigned_to_id"`
 }
 
 type RedmineIssue struct {
 	Issue Issue `json:"issue"`
 }
 
-func RedmineTicket(ticketSubject, ticketDescription string) {
-	getENV()
-	issue := RedmineIssue{
-		Issue: Issue{
-			ProjectID:   projectID,
-			Subject:     ticketSubject,
-			Description: ticketDescription,
-			PriorityID:  priorityID,
-		},
-	}
+func (t *RedmineIssue) SendTicket(redmineURL, apiKey, userID string) {
+	// issue := RedmineIssue{
+	// 	Issue: Issue{
+	// 		ProjectID:   ticket.ProjectID,
+	// 		Subject:     ticketSubject,
+	// 		Description: ticketDescription,
+	// 		PriorityID:  ticket.PriorityID,
+	// 		// AssignedID:  assignedID,
+	// 	},
+	// }
 
-	issueData, err := json.Marshal(issue)
+	issueData, err := json.Marshal(t)
 	if err != nil {
 		fmt.Printf("Error marshalling issue: %v\n", err)
 		return
@@ -51,6 +44,8 @@ func RedmineTicket(ticketSubject, ticketDescription string) {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Redmine-API-Key", apiKey)
+	req.Header.Set("X-Redmine-Switch-User", userID) //user_login_or_id
+	// This allows you to create a ticket on behalf of another user
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -65,10 +60,4 @@ func RedmineTicket(ticketSubject, ticketDescription string) {
 	} else {
 		fmt.Printf("Failed to create issue. Status: %s\n", resp.Status)
 	}
-}
-
-func getENV() {
-	redmineURL = fmt.Sprintf("%s/issues.json", os.Getenv("RED_URL"))
-	apiKey = os.Getenv("RED_APIKEY")
-	projectID = os.Getenv("RED_PID")
 }
