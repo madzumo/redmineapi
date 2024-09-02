@@ -48,11 +48,13 @@ func (app *application) sendTicketPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	t := getTicketMeta()
-	app.redmine.Issue.Description = r.PostForm.Get("details")
-	app.redmine.Issue.PriorityID = t.priorityID
-	app.redmine.Issue.ProjectID = t.projectID
-	app.redmine.Issue.Subject = r.PostForm.Get("subj")
-	app.redmine.SendTicket(t.redmineURL, t.apiKey, "0")
+	app.redmine.RedmineURL = t.redmineURL
+	app.redmine.ApiKey = t.apiKey
+	app.redmine.Issue.Issue.PriorityID = t.priorityID
+	app.redmine.Issue.Issue.ProjectID = t.projectID
+	app.redmine.Issue.Issue.Description = r.PostForm.Get("details")
+	app.redmine.Issue.Issue.Subject = r.PostForm.Get("subj")
+	app.redmine.SendTicket()
 
 	http.Redirect(w, r, "/?message=Ticket submitted successfully!", http.StatusSeeOther)
 }
@@ -93,6 +95,5 @@ func (app *application) adminAreaPost(w http.ResponseWriter, r *http.Request) {
 	os.Setenv("RED_URL", redmine)
 	os.Setenv("RED_PID", pid)
 	os.Setenv("RED_APIKEY", apiKey)
-	// fmt.Fprintf(w, "%s", redmine)
 	http.Redirect(w, r, "/admin/", http.StatusSeeOther)
 }

@@ -7,46 +7,38 @@ import (
 	"net/http"
 )
 
-type Issue struct {
-	ProjectID   string `json:"project_id"`
-	Subject     string `json:"subject"`
-	Description string `json:"description"`
-	PriorityID  string `json:"priority_id"`
-	// AssignedID  string `json:"assigned_to_id"`
+type Issues struct {
+	Issue struct {
+		ProjectID   string `json:"project_id"`
+		Subject     string `json:"subject"`
+		Description string `json:"description"`
+		PriorityID  string `json:"priority_id"`
+	} `json:"issue"`
 }
 
-type RedmineIssue struct {
-	Issue Issue `json:"issue"`
+type RedmineTicket struct {
+	Issue      Issues
+	RedmineURL string
+	ApiKey     string
 }
 
-func (t *RedmineIssue) SendTicket(redmineURL, apiKey, userID string) {
-	// issue2 := RedmineIssue{
-	// 	Issue: Issue{
-	// 		ProjectID:   "22",
-	// 		Subject:     "33",
-	// 		Description: "44",
-	// 		PriorityID:  "55",
-	// 		// AssignedID:  assignedID,
-	// 	},
-	// }
-
-	// fmt.Printf("t: %s\n", t)
-	// fmt.Printf("issue2: %s\n", issue2)
-	issueData, err := json.Marshal(t)
+func (t *RedmineTicket) SendTicket() {
+	issueData, err := json.Marshal(t.Issue)
 	if err != nil {
-		fmt.Printf("Error marshalling issue: %v\n", err)
+		fmt.Printf("Error marshalling issue: %v\nJSON sent:%s", err, t.Issue)
 		return
 	}
 
-	req, err := http.NewRequest("POST", redmineURL, bytes.NewBuffer(issueData))
+	req, err := http.NewRequest("POST", t.RedmineURL, bytes.NewBuffer(issueData))
 	if err != nil {
 		fmt.Printf("Error creating request: %v\n", err)
 		return
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Redmine-API-Key", apiKey)
-	// req.Header.Set("X-Redmine-Switch-User", "user_login_or_id") //create a ticket on behalf of another user
+	req.Header.Set("X-Redmine-API-Key", t.ApiKey)
+	//create a ticket on behalf of another user
+	// req.Header.Set("X-Redmine-Switch-User", "brian") //user_login_or_id
 
 	client := &http.Client{}
 	resp, err := client.Do(req)

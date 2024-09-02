@@ -12,7 +12,7 @@ import (
 
 type application struct {
 	logger  *slog.Logger
-	redmine *internal.RedmineIssue
+	redmine *internal.RedmineTicket
 }
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	app := &application{
 		logger:  logger,
-		redmine: &internal.RedmineIssue{},
+		redmine: &internal.RedmineTicket{},
 	}
 
 	logger.Info("starting server", "port", *port)
