@@ -37,11 +37,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) sendTicketPost(w http.ResponseWriter, r *http.Request) {
-	//this is not needed because we are handling on the servemux (router)
-	// if r.Method != http.MethodPost {
-	// 	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	// 	return
-	// }
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "Unable to parse form", http.StatusBadRequest)
