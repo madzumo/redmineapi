@@ -86,8 +86,14 @@ func (app *application) adminAreaPost(w http.ResponseWriter, r *http.Request) {
 	pid := r.PostForm.Get("pid")
 	apiKey := r.PostForm.Get("apikey")
 
-	// fmt.Printf("What I got: %s, %s, %s", redmine, pid, apiKey)
-	os.Setenv("RED_URL", redmine)
+	//don't overwrite existing
+	s := getENV()
+
+	//set env vars
+	if s.CurrentRedmine == "" {
+		os.Setenv("RED_URL", redmine)
+	}
+
 	os.Setenv("RED_PID", pid)
 	os.Setenv("RED_APIKEY", apiKey)
 	http.Redirect(w, r, "/admin/", http.StatusSeeOther)
