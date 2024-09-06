@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os"
 )
 
 // handlers
@@ -82,19 +81,11 @@ func (app *application) adminAreaPost(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	redmine := r.PostForm.Get("redmine")
+	redMine := r.PostForm.Get("redmine")
 	pid := r.PostForm.Get("pid")
 	apiKey := r.PostForm.Get("apikey")
 
-	//don't overwrite existing
-	s := getENV()
-
 	//set env vars
-	if s.CurrentRedmine == "" {
-		os.Setenv("RED_URL", redmine)
-	}
-
-	os.Setenv("RED_PID", pid)
-	os.Setenv("RED_APIKEY", apiKey)
+	setENV(redMine, pid, apiKey)
 	http.Redirect(w, r, "/admin/", http.StatusSeeOther)
 }

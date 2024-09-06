@@ -56,7 +56,7 @@ func (t *RedmineTicket) SendTicket() {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Redmine-API-Key", t.ApiKey)
 	//create a ticket on behalf of another user
-	req.Header.Set("X-Redmine-Switch-User", "irineu") //user_login_or_id
+	// req.Header.Set("X-Redmine-Switch-User", "watson") //user_login_or_id
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
